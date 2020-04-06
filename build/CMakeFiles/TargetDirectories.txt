@@ -1,0 +1,3 @@
+/Users/kinsei/Projects/github/HandyDataBase/build/CMakeFiles/rebuild_cache.dir
+/Users/kinsei/Projects/github/HandyDataBase/build/CMakeFiles/edit_cache.dir
+/Users/kinsei/Projects/github/HandyDataBase/build/CMakeFiles/handy_database.dir
