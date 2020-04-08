@@ -93,16 +93,15 @@ void print_prompt() {
 }
 
 void *row_slot(Table *table,uint32_t row_num) {
-    printf("in row_slot");
     uint32_t page_num = row_num/ROWS_PER_PAGE;
-    printf("page_num is %d",page_num);
+    printf("page_num is %d\n",page_num);
     uint32_t row_offset = row_num%ROWS_PER_PAGE;
     void *page = table->Pages[page_num];
     if (page == NULL) {
         page = malloc(PAGE_SIZE);
     }
-    printf("ROW_SIZE is %d",ROW_SIZE);
-    printf("row_offset is %d",row_offset);
+    printf("ROW_SIZE is %d\n",ROW_SIZE);
+    printf("row_offset is %d\n",row_offset);
     void *row_slot = page+row_offset*ROW_SIZE;
     return row_slot;
 }
@@ -160,15 +159,15 @@ StatementPrepareResult prepare_db_command(InputBuffer *input_buffer, Statement *
 
 void seralize_row(Row *row, void *destination) {
     printf("in seralize_row");
-    memcpy(destination+ID_OFFSET, row->id, ID_SIZE);
+    memcpy(destination+ID_OFFSET, &(row->id), ID_SIZE);
     memcpy(destination+USERNAME_OFFSET, row->username, USERNAME_SIZE);
     memcpy(destination+EMAIL_OFFSET, row->email, EMAIL_SIZE);
 }
 
 void deserlize_row(void* source, Row *row) {
     memcpy(&(row->id),source+ID_OFFSET, ID_SIZE);
-    memcpy(&(row->username),source+USERNAME_OFFSET, USERNAME_SIZE);
-    memcpy(&(row->email),source+EMAIL_OFFSET, EMAIL_SIZE);
+    memcpy(row->username,source+USERNAME_OFFSET, USERNAME_SIZE);
+    memcpy(row->email,source+EMAIL_OFFSET, EMAIL_SIZE);
 }
 
 void dump_statement(Statement *statement) {
@@ -178,16 +177,12 @@ void dump_statement(Statement *statement) {
 }
 
 ExecuteResult execute_insert_statment(Statement *statement, Table*table) {
-    sleep(1);
     if (table->num_rows >= TABLE_MAX_ROWS) {
         return EXECUTE_TABLE_FULL;
     }
-    printf("in execute_insert_statment");
-    sleep(1);
-    seralize_row(&(statement->row),row_slot(table,table->num_rows));
-    sleep(1);
+    void *slot = row_slot(table,table->num_rows);
+    seralize_row(&(statement->row),slot);
     table->num_rows++;
-    printf("This is a insert command!\n");
     return EXECUTE_SUCCESS;
 }
 

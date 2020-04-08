@@ -5,6 +5,14 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "(lldb) 附加",
+            "type": "cppdbg",
+            "request": "attach",
+            "program": "${workspaceFolder}/build/handy_database",
+            "processId": "${command:pickProcess}",
+            "MIMode": "lldb"
+        },
+        {
             "name": "(lldb) 启动",
             "type": "cppdbg",
             "request": "launch",
