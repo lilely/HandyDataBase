@@ -1,10 +1,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+#include <string.h>
 
 #define TABLE_MAX_PAGES 100
 #define COLUMN_USERNAME_SIZE 32
 #define COLUMN_EMAIL_SIZE 255
+
+typedef struct {
+    uint32_t id;
+    char username[COLUMN_USERNAME_SIZE];
+    char email[COLUMN_EMAIL_SIZE];
+} Row;
 
 #define sizeof_attribute(Struct, Attribute) sizeof(((Struct *)0)->Attribute)
 
@@ -37,6 +44,12 @@ typedef enum {
 } StatementPrepareResult;
 
 typedef enum {
+    EXECUTE_SUCCESS,
+    EXECUTE_FAIL,
+    EXECUTE_TABLE_FULL,
+} ExecuteResult;
+
+typedef enum {
     STATEMENT_INSERT,
     STATEMENT_SELECT,
 } StatementType;
@@ -45,12 +58,6 @@ typedef struct {
     StatementType statement_type;
     Row row;
 } Statement;
-
-typedef struct {
-    uint32_t id;
-    char username[COLUMN_USERNAME_SIZE];
-    char email[COLUMN_EMAIL_SIZE];
-} Row;
 
 typedef struct {
     char *buffer;
@@ -85,59 +92,6 @@ void print_prompt() {
     printf("db > ");
 }
 
-MetaCommandResult process_meta_command(InputBuffer *input_buffer, Table *table) {
-    if (strcmp(input_buffer->buffer,".exit") == 0)
-    {
-        close_inputBuffer(input_buffer);
-        free_table(table);
-        exit(EXIT_SUCCESS);
-    } else {
-        return META_COMMAND_UNRECOGINIZED;
-    }
-}
-
-StatementPrepareResult prepare_db_command(InputBuffer *input_buffer, Statement *statement) {
-    if (strncmp(input_buffer->buffer,"insert",6) == 0)
-    {
-        statement->statement_type = STATEMENT_INSERT;
-        return STATEMENT_PREPARE_SUCCESS;
-    } else if (strncmp(input_buffer->buffer,"select",6) == 0) {
-        statement->statement_type = STATEMENT_SELECT;
-        return STATEMENT_PREPARE_SUCCESS;
-    }
-    return STATEMENT_PREPARE_UNRECONGINZED;
-}
-
-void process_statement(InputBuffer *input_buffer, Statement *statement) {
-    switch (statement->statement_type)
-    {
-    case STATEMENT_INSERT:
-        printf("This is a insert command!\n");
-        break;
-    case STATEMENT_SELECT:
-        printf("Thit is a select command!\n");
-    default:
-        printf("Unrecongized input!\n");
-        break;
-    }
-}
-
-void print_row(Row *row) {
-    printf("(Row: %d, %s, %s)\n",row->id,row->username,row->email);
-}
-
-void seralize_row(Row *row, void *destination) {
-    memcpy(destination+ID_OFFSET, row->id);
-    memcpy(destination+USERNAME_OFFSET, row->username);
-    memcpy(destination+EMAIL_OFFSET, row->email);
-}
-
-void deserlize_row(void* source, Row *row) {
-    memcpy(&(row->id),source+ID_OFFSET);
-    memcpy(&(row->username),source+USERNAME_OFFSET);
-    memcpy(&(row->email),source+EMAIL_OFFSET);
-}
-
 void *row_slot(Table *table,uint32_t row_num) {
     uint32_t page_num = row_num/ROWS_PER_PAGE;
     uint32_t row_offset = row_num%ROWS_PER_PAGE;
@@ -169,8 +123,98 @@ void free_table(Table *table){
     free(table);
 }
 
+MetaCommandResult process_meta_command(InputBuffer *input_buffer, Table *table) {
+    if (strcmp(input_buffer->buffer,".exit") == 0)
+    {
+        close_inputBuffer(input_buffer);
+        free_table(table);
+        exit(EXIT_SUCCESS);
+    } else {
+        return META_COMMAND_UNRECOGINIZED;
+    }
+}
+
+StatementPrepareResult prepare_db_command(InputBuffer *input_buffer, Statement *statement) {
+    if (strncmp(input_buffer->buffer,"insert",6) == 0)
+    {
+        statement->statement_type = STATEMENT_INSERT;
+        int args_assigned = sscanf(input_buffer->buffer,"insert %d %s %s",
+                                &(statement->row.id),
+                                &(statement->row.username),
+                                &(statement->row.email));
+        if (args_assigned != 3) {
+            return STATEMENT_PREPARE_ERROR;
+        }
+        return STATEMENT_PREPARE_SUCCESS;
+    } else if (strncmp(input_buffer->buffer,"select",6) == 0) {
+        statement->statement_type = STATEMENT_SELECT;
+        return STATEMENT_PREPARE_SUCCESS;
+    }
+    return STATEMENT_PREPARE_UNRECONGINZED;
+}
+
+void process_statement(Statement *statement, Table *table) {
+    switch (statement->statement_type)
+    {
+    case STATEMENT_INSERT:
+        printf("This is a insert command!\n");
+        break;
+    case STATEMENT_SELECT:
+        printf("Thit is a select command!\n");
+        break;
+    default:
+        printf("Unrecongized input!\n");
+        break;
+    }
+}
+
+void seralize_row(Row *row, void *destination) {
+    memcpy(destination+ID_OFFSET, row->id, ID_SIZE);
+    memcpy(destination+USERNAME_OFFSET, row->username, USERNAME_SIZE);
+    memcpy(destination+EMAIL_OFFSET, row->email, EMAIL_SIZE);
+}
+
+void deserlize_row(void* source, Row *row) {
+    memcpy(&(row->id),source+ID_OFFSET, ID_SIZE);
+    memcpy(&(row->username),source+USERNAME_OFFSET, USERNAME_SIZE);
+    memcpy(&(row->email),source+EMAIL_OFFSET, EMAIL_SIZE);
+}
+
+ExecuteResult execute_insert_statment(Statement *statement, Table*table) {
+    if (table->num_rows >= TABLE_MAX_ROWS) {
+        return EXECUTE_TABLE_FULL;
+    }
+    seralize_row(&(statement->row),row_slot(table,table->num_rows));
+    table->num_rows++;
+    printf("This is a insert command!\n");
+    return EXECUTE_SUCCESS;
+}
+
+ExecuteResult execute_select_statment(Statement *statment, Table*table) {
+    printf("This is a select command!\n");
+}
+
+ExecuteResult execute_statement(Statement *statement, Table *table) {
+    switch (statement->statement_type)
+    {
+        case STATEMENT_INSERT:
+            return execute_insert_statment(statement, table);
+        case STATEMENT_SELECT:
+            return execute_select_statment(statement, table);
+        default:
+            printf("Unrecongized input!\n");
+            break;
+    }
+    return EXECUTE_FAIL;
+}
+
+void print_row(Row *row) {
+    printf("(Row: %d, %s, %s)\n",row->id,row->username,row->email);
+}
+
 int main(int argc, char *argv[])
 {
+    Table *table = new_table();
     InputBuffer *input_buffer = new_input_buffer();
     while (1)
     {
@@ -178,10 +222,8 @@ int main(int argc, char *argv[])
         read_input(input_buffer);
         if (input_buffer->buffer[0] == '.')
         {
-            switch (process_meta_command(input_buffer))
+            switch (process_meta_command(input_buffer, table))
             {
-                case META_COMMAND_SUCCESS:
-                    break;
                 case META_COMMAND_UNRECOGINIZED:
                 default:
                     continue;
@@ -191,14 +233,26 @@ int main(int argc, char *argv[])
         Statement statement;
         switch (prepare_db_command(input_buffer, &statement)) {
             case STATEMENT_PREPARE_SUCCESS:
-                process_statement(input_buffer, &statement);
+                break;
+
+            case STATEMENT_PREPARE_ERROR:
+                printf("Command failed!\n");
                 continue;
 
             case STATEMENT_PREPARE_UNRECONGINZED:
                 printf("Unrecongized input!\n");
                 continue;
         }
+
+        switch (execute_statement(&statement, table)) {
+            case EXECUTE_SUCCESS:
+                printf("command executed success!\n");
+                continue;
+            case EXECUTE_FAIL:
+                printf("command executed failed!\n");
+                continue;
+        }
     }
-    
+    free_table(table);
     return 0;
 }
