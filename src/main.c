@@ -93,12 +93,16 @@ void print_prompt() {
 }
 
 void *row_slot(Table *table,uint32_t row_num) {
+    printf("in row_slot");
     uint32_t page_num = row_num/ROWS_PER_PAGE;
+    printf("page_num is %d",page_num);
     uint32_t row_offset = row_num%ROWS_PER_PAGE;
     void *page = table->Pages[page_num];
     if (page == NULL) {
         page = malloc(PAGE_SIZE);
     }
+    printf("ROW_SIZE is %d",ROW_SIZE);
+    printf("row_offset is %d",row_offset);
     void *row_slot = page+row_offset*ROW_SIZE;
     return row_slot;
 }
@@ -138,10 +142,11 @@ StatementPrepareResult prepare_db_command(InputBuffer *input_buffer, Statement *
     if (strncmp(input_buffer->buffer,"insert",6) == 0)
     {
         statement->statement_type = STATEMENT_INSERT;
+        printf("\n input is %s",input_buffer->buffer);
         int args_assigned = sscanf(input_buffer->buffer,"insert %d %s %s",
                                 &(statement->row.id),
-                                &(statement->row.username),
-                                &(statement->row.email));
+                                statement->row.username,
+                                statement->row.email);
         if (args_assigned != 3) {
             return STATEMENT_PREPARE_ERROR;
         }
@@ -153,22 +158,8 @@ StatementPrepareResult prepare_db_command(InputBuffer *input_buffer, Statement *
     return STATEMENT_PREPARE_UNRECONGINZED;
 }
 
-void process_statement(Statement *statement, Table *table) {
-    switch (statement->statement_type)
-    {
-    case STATEMENT_INSERT:
-        printf("This is a insert command!\n");
-        break;
-    case STATEMENT_SELECT:
-        printf("Thit is a select command!\n");
-        break;
-    default:
-        printf("Unrecongized input!\n");
-        break;
-    }
-}
-
 void seralize_row(Row *row, void *destination) {
+    printf("in seralize_row");
     memcpy(destination+ID_OFFSET, row->id, ID_SIZE);
     memcpy(destination+USERNAME_OFFSET, row->username, USERNAME_SIZE);
     memcpy(destination+EMAIL_OFFSET, row->email, EMAIL_SIZE);
@@ -180,11 +171,21 @@ void deserlize_row(void* source, Row *row) {
     memcpy(&(row->email),source+EMAIL_OFFSET, EMAIL_SIZE);
 }
 
+void dump_statement(Statement *statement) {
+    printf("\nid is %d\n",statement->row.id);
+    printf("username is %s\n",statement->row.username);
+    printf("email is %s\n",statement->row.email);
+}
+
 ExecuteResult execute_insert_statment(Statement *statement, Table*table) {
+    sleep(1);
     if (table->num_rows >= TABLE_MAX_ROWS) {
         return EXECUTE_TABLE_FULL;
     }
+    printf("in execute_insert_statment");
+    sleep(1);
     seralize_row(&(statement->row),row_slot(table,table->num_rows));
+    sleep(1);
     table->num_rows++;
     printf("This is a insert command!\n");
     return EXECUTE_SUCCESS;
@@ -195,6 +196,7 @@ ExecuteResult execute_select_statment(Statement *statment, Table*table) {
 }
 
 ExecuteResult execute_statement(Statement *statement, Table *table) {
+    printf("in execute_statement");
     switch (statement->statement_type)
     {
         case STATEMENT_INSERT:
@@ -229,7 +231,6 @@ int main(int argc, char *argv[])
                     continue;
             }
         }
-        
         Statement statement;
         switch (prepare_db_command(input_buffer, &statement)) {
             case STATEMENT_PREPARE_SUCCESS:
@@ -243,7 +244,7 @@ int main(int argc, char *argv[])
                 printf("Unrecongized input!\n");
                 continue;
         }
-
+        dump_statement(&statement);
         switch (execute_statement(&statement, table)) {
             case EXECUTE_SUCCESS:
                 printf("command executed success!\n");
