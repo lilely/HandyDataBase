@@ -98,7 +98,7 @@ void *row_slot(Table *table,uint32_t row_num) {
     uint32_t row_offset = row_num%ROWS_PER_PAGE;
     void *page = table->Pages[page_num];
     if (page == NULL) {
-        page = malloc(PAGE_SIZE);
+        page = table->Pages[page_num] = malloc(PAGE_SIZE);
     }
     printf("ROW_SIZE is %d\n",ROW_SIZE);
     printf("row_offset is %d\n",row_offset);
@@ -137,12 +137,18 @@ MetaCommandResult process_meta_command(InputBuffer *input_buffer, Table *table) 
     }
 }
 
+void dump_statement(Statement *statement) {
+    printf("\nid is %d\n",statement->row.id);
+    printf("username is %s\n",statement->row.username);
+    printf("email is %s\n",statement->row.email);
+}
+
 StatementPrepareResult prepare_db_command(InputBuffer *input_buffer, Statement *statement) {
     if (strncmp(input_buffer->buffer,"insert",6) == 0)
     {
         statement->statement_type = STATEMENT_INSERT;
         printf("\n input is %s",input_buffer->buffer);
-        int args_assigned = sscanf(input_buffer->buffer,"insert %d %s %s",
+        int args_assigned = sscanf((char*)(input_buffer->buffer),"insert %d %s %s",
                                 &(statement->row.id),
                                 statement->row.username,
                                 statement->row.email);
@@ -170,10 +176,10 @@ void deserlize_row(void* source, Row *row) {
     memcpy(row->email,source+EMAIL_OFFSET, EMAIL_SIZE);
 }
 
-void dump_statement(Statement *statement) {
-    printf("\nid is %d\n",statement->row.id);
-    printf("username is %s\n",statement->row.username);
-    printf("email is %s\n",statement->row.email);
+void dump_row(Row *row) {
+    printf("\nid is %d\n",row->id);
+    printf("username is %s\n",row->username);
+    printf("email is %s\n",row->email);
 }
 
 ExecuteResult execute_insert_statment(Statement *statement, Table*table) {
@@ -187,11 +193,16 @@ ExecuteResult execute_insert_statment(Statement *statement, Table*table) {
 }
 
 ExecuteResult execute_select_statment(Statement *statment, Table*table) {
+    Row row;
+    for(int i = 1; i<=table->num_rows; i++) {
+        printf("table->num_rows is %d\n",table->num_rows);
+        deserlize_row(row_slot(table,i-1), &row);
+        dump_row(&row);
+    }
     printf("This is a select command!\n");
 }
 
 ExecuteResult execute_statement(Statement *statement, Table *table) {
-    printf("in execute_statement");
     switch (statement->statement_type)
     {
         case STATEMENT_INSERT:
@@ -239,7 +250,7 @@ int main(int argc, char *argv[])
                 printf("Unrecongized input!\n");
                 continue;
         }
-        dump_statement(&statement);
+        
         switch (execute_statement(&statement, table)) {
             case EXECUTE_SUCCESS:
                 printf("command executed success!\n");
