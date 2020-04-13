@@ -4,6 +4,8 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_C
+  "/Users/kinsei/Projects/github/HandyDataBase/src/Pager.c" "/Users/kinsei/Projects/github/HandyDataBase/build/CMakeFiles/handy_database.dir/src/Pager.o"
+  "/Users/kinsei/Projects/github/HandyDataBase/src/Table.c" "/Users/kinsei/Projects/github/HandyDataBase/build/CMakeFiles/handy_database.dir/src/Table.o"
   "/Users/kinsei/Projects/github/HandyDataBase/src/main.c" "/Users/kinsei/Projects/github/HandyDataBase/build/CMakeFiles/handy_database.dir/src/main.o"
   )
 set(CMAKE_C_COMPILER_ID "Clang")

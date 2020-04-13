@@ -6,13 +6,19 @@
 
 #IncludeRegexTransform: 
 
-/Users/kinsei/Projects/github/HandyDataBase/src/main.c
-stdio.h
--
+../include/Pager.h
 stdlib.h
 -
-math.h
+stdio.h
 -
-string.h
+
+../include/Table.h
+Pager.h
+../include/Pager.h
+
+/Users/kinsei/Projects/github/HandyDataBase/src/Table.c
+Table.h
+/Users/kinsei/Projects/github/HandyDataBase/src/Table.h
+fcntl.h
 -
 
