@@ -140,29 +140,39 @@ void deserlize_row(void* source, Row *row) {
 }
 
 void dump_row(Row *row) {
-    printf("\nid is %d\n",row->id);
-    printf("username is %s\n",row->username);
-    printf("email is %s\n",row->email);
+    printf("(id: %d, username: %s, email: %s\n",row->id,row->username,row->email);
 }
 
 ExecuteResult execute_insert_statment(Statement *statement, Table*table) {
     if (table->num_rows >= TABLE_MAX_ROWS) {
         return EXECUTE_TABLE_FULL;
     }
-    void *slot = row_slot(table,table->num_rows);
+    Cursor *cursor = create_cursor_of_end(table);
+    void *slot = cursor_value(cursor);
+    // void *slot = row_slot(table,table->num_rows);
     seralize_row(&(statement->row),slot);
     table->num_rows++;
+    free(cursor);
     return EXECUTE_SUCCESS;
 }
 
 ExecuteResult execute_select_statment(Statement *statment, Table*table) {
     Row row;
-    for(int i = 1; i<=table->num_rows; i++) {
-        printf("table->num_rows is %d\n",table->num_rows);
-        deserlize_row(row_slot(table,i-1), &row);
+    // for(int i = 1; i<=table->num_rows; i++) {
+    //     printf("table->num_rows is %d\n",table->num_rows);
+    //     deserlize_row(row_slot(table,i-1), &row);
+    //     dump_row(&row);
+    // }
+    
+    Cursor *cursor = create_cursor_of_start(table);
+    while (!cursor->is_end)
+    {
+        deserlize_row(cursor_value(cursor), &row);
         dump_row(&row);
+        cursor_advanced(cursor);
     }
-    printf("This is a select command!\n");
+    free(cursor);
+    return EXECUTE_SUCCESS;
 }
 
 ExecuteResult execute_statement(Statement *statement, Table *table) {
@@ -230,7 +240,6 @@ int main(int argc, char *argv[])
         
         switch (execute_statement(&statement, table)) {
             case EXECUTE_SUCCESS:
-                printf("command executed success!\n");
                 continue;
             case EXECUTE_FAIL:
                 printf("command executed failed!\n");

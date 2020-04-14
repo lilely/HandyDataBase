@@ -72,3 +72,39 @@ void *row_slot(Table *table,uint32_t row_num) {
     void *row_slot = page+row_offset*ROW_SIZE;
     return row_slot;
 }
+
+Cursor *create_cursor_of_start(Table *table) {
+    Cursor *cursor = (Cursor *)malloc(sizeof(Cursor));
+    cursor->table = table;
+    cursor->num_of_row = 0;
+    cursor->is_end = (table->num_rows == 0);
+    return cursor;
+}
+
+Cursor *create_cursor_of_end(Table *table) {
+    Cursor *cursor = (Cursor *)malloc(sizeof(Cursor));
+    cursor->table = table;
+    cursor->num_of_row = table->num_rows;
+    cursor->is_end = 1;
+    return cursor;
+}
+
+void *cursor_value(Cursor *cursor) {
+    uint32_t row_num = cursor->num_of_row;
+    uint32_t page_num = row_num/ROWS_PER_PAGE;
+    printf("page_num is %d\n",page_num);
+    uint32_t row_offset = row_num%ROWS_PER_PAGE;
+    void *page = get_page(cursor->table, page_num);
+    printf("ROW_SIZE is %d\n",ROW_SIZE);
+    printf("row_offset is %d\n",row_offset);
+    void *row_slot = page+row_offset*ROW_SIZE;
+    return row_slot;
+}
+
+void cursor_advanced(Cursor *cursor) {
+    cursor->num_of_row +=1;
+    if (cursor->num_of_row  == cursor->table->num_rows)
+    {
+        cursor->is_end = 1;
+    }
+}

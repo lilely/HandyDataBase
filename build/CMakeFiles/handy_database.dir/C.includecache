@@ -16,9 +16,13 @@ stdio.h
 Pager.h
 ../include/Pager.h
 
-/Users/kinsei/Projects/github/HandyDataBase/src/Table.c
+/Users/kinsei/Projects/github/HandyDataBase/src/main.c
+stdio.h
+-
+math.h
+-
+string.h
+-
 Table.h
 /Users/kinsei/Projects/github/HandyDataBase/src/Table.h
-fcntl.h
--
 
