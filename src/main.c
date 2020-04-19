@@ -2,6 +2,7 @@
 #include <math.h>
 #include <string.h>
 #include "Table.h"
+#include "Btree.h"
 
 typedef enum {
     META_COMMAND_SUCCESS,
@@ -117,7 +118,7 @@ StatementPrepareResult prepare_insert_command(InputBuffer *input_buffer, Stateme
 StatementPrepareResult prepare_db_command(InputBuffer *input_buffer, Statement *statement) {
     if (strncmp(input_buffer->buffer,"insert",6) == 0)
     {
-        printf("\n input is %s",input_buffer->buffer);
+        printf("\n input is %s\n",input_buffer->buffer);
         return prepare_insert_command(input_buffer, statement);
     } else if (strncmp(input_buffer->buffer,"select",6) == 0) {
         statement->statement_type = STATEMENT_SELECT;
@@ -143,27 +144,46 @@ void dump_row(Row *row) {
     printf("(id: %d, username: %s, email: %s\n",row->id,row->username,row->email);
 }
 
+ExecuteResult leaf_node_insert(Cursor *cursor, uint32_t key, Row *value) {
+    void *node = get_page(cursor->table->pager,cursor->page_num);
+    uint32_t cell_nums = *(leaf_node_num_cells(node));
+    if (cell_nums >= LEAF_NODE_MAX_CELLS) {
+        return EXECUTE_TABLE_FULL;
+    }
+    if (cursor->cell_num < cell_nums) {
+        for (uint32_t i = cell_nums; i>cursor->cell_num; i--) {
+            memcpy(leaf_node_cell(node,i),leaf_node_cell(node,i-1),LEAF_NODE_CELL_SIZE);
+        }
+    }
+    *(leaf_node_num_cells(node)) += 1;
+    *(leaf_node_key(node,cursor->cell_num)) = key;
+    seralize_row(value,leaf_node_value(node,cursor->cell_num));
+    printf("leaf_node_insert success\n");
+    return EXECUTE_SUCCESS;
+}
+
 ExecuteResult execute_insert_statment(Statement *statement, Table*table) {
-    if (table->num_rows >= TABLE_MAX_ROWS) {
+    uint32_t root_page_num = table->root_page_num;
+    printf("in execute_insert_statment\n");
+    void *node = get_page(table->pager,root_page_num);
+    printf("root_page_num is %d\n",root_page_num);
+    printf("address of node is %ld\n",node);
+    printf("address of pages is %ld\n",table->pager->pages[0]);
+    uint32_t cell_nums = *(leaf_node_num_cells(node));
+    printf("cell_nums is %d\n",cell_nums);
+    if (cell_nums >= LEAF_NODE_MAX_CELLS) {
         return EXECUTE_TABLE_FULL;
     }
     Cursor *cursor = create_cursor_of_end(table);
-    void *slot = cursor_value(cursor);
-    // void *slot = row_slot(table,table->num_rows);
-    seralize_row(&(statement->row),slot);
-    table->num_rows++;
+    ExecuteResult result = leaf_node_insert(cursor,statement->row.id,&(statement->row));
+
     free(cursor);
+    // return result;
     return EXECUTE_SUCCESS;
 }
 
 ExecuteResult execute_select_statment(Statement *statment, Table*table) {
     Row row;
-    // for(int i = 1; i<=table->num_rows; i++) {
-    //     printf("table->num_rows is %d\n",table->num_rows);
-    //     deserlize_row(row_slot(table,i-1), &row);
-    //     dump_row(&row);
-    // }
-    
     Cursor *cursor = create_cursor_of_start(table);
     while (!cursor->is_end)
     {

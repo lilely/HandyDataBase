@@ -74,9 +74,22 @@ include CMakeFiles/handy_database.dir/progress.make
 # Include the compile flags for this target's objects.
 include CMakeFiles/handy_database.dir/flags.make
 
+CMakeFiles/handy_database.dir/src/Btree.o: CMakeFiles/handy_database.dir/flags.make
+CMakeFiles/handy_database.dir/src/Btree.o: ../src/Btree.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/kinsei/Projects/github/HandyDataBase/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object CMakeFiles/handy_database.dir/src/Btree.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/handy_database.dir/src/Btree.o   -c /Users/kinsei/Projects/github/HandyDataBase/src/Btree.c
+
+CMakeFiles/handy_database.dir/src/Btree.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/handy_database.dir/src/Btree.i"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /Users/kinsei/Projects/github/HandyDataBase/src/Btree.c > CMakeFiles/handy_database.dir/src/Btree.i
+
+CMakeFiles/handy_database.dir/src/Btree.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/handy_database.dir/src/Btree.s"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /Users/kinsei/Projects/github/HandyDataBase/src/Btree.c -o CMakeFiles/handy_database.dir/src/Btree.s
+
 CMakeFiles/handy_database.dir/src/Pager.o: CMakeFiles/handy_database.dir/flags.make
 CMakeFiles/handy_database.dir/src/Pager.o: ../src/Pager.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/kinsei/Projects/github/HandyDataBase/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building C object CMakeFiles/handy_database.dir/src/Pager.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/kinsei/Projects/github/HandyDataBase/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object CMakeFiles/handy_database.dir/src/Pager.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/handy_database.dir/src/Pager.o   -c /Users/kinsei/Projects/github/HandyDataBase/src/Pager.c
 
 CMakeFiles/handy_database.dir/src/Pager.i: cmake_force
@@ -87,9 +100,22 @@ CMakeFiles/handy_database.dir/src/Pager.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/handy_database.dir/src/Pager.s"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /Users/kinsei/Projects/github/HandyDataBase/src/Pager.c -o CMakeFiles/handy_database.dir/src/Pager.s
 
+CMakeFiles/handy_database.dir/src/Row.o: CMakeFiles/handy_database.dir/flags.make
+CMakeFiles/handy_database.dir/src/Row.o: ../src/Row.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/kinsei/Projects/github/HandyDataBase/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building C object CMakeFiles/handy_database.dir/src/Row.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/handy_database.dir/src/Row.o   -c /Users/kinsei/Projects/github/HandyDataBase/src/Row.c
+
+CMakeFiles/handy_database.dir/src/Row.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/handy_database.dir/src/Row.i"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /Users/kinsei/Projects/github/HandyDataBase/src/Row.c > CMakeFiles/handy_database.dir/src/Row.i
+
+CMakeFiles/handy_database.dir/src/Row.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/handy_database.dir/src/Row.s"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /Users/kinsei/Projects/github/HandyDataBase/src/Row.c -o CMakeFiles/handy_database.dir/src/Row.s
+
 CMakeFiles/handy_database.dir/src/Table.o: CMakeFiles/handy_database.dir/flags.make
 CMakeFiles/handy_database.dir/src/Table.o: ../src/Table.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/kinsei/Projects/github/HandyDataBase/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building C object CMakeFiles/handy_database.dir/src/Table.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/kinsei/Projects/github/HandyDataBase/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building C object CMakeFiles/handy_database.dir/src/Table.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/handy_database.dir/src/Table.o   -c /Users/kinsei/Projects/github/HandyDataBase/src/Table.c
 
 CMakeFiles/handy_database.dir/src/Table.i: cmake_force
@@ -102,7 +128,7 @@ CMakeFiles/handy_database.dir/src/Table.s: cmake_force
 
 CMakeFiles/handy_database.dir/src/main.o: CMakeFiles/handy_database.dir/flags.make
 CMakeFiles/handy_database.dir/src/main.o: ../src/main.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/kinsei/Projects/github/HandyDataBase/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building C object CMakeFiles/handy_database.dir/src/main.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/kinsei/Projects/github/HandyDataBase/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building C object CMakeFiles/handy_database.dir/src/main.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/handy_database.dir/src/main.o   -c /Users/kinsei/Projects/github/HandyDataBase/src/main.c
 
 CMakeFiles/handy_database.dir/src/main.i: cmake_force
@@ -115,19 +141,23 @@ CMakeFiles/handy_database.dir/src/main.s: cmake_force
 
 # Object files for target handy_database
 handy_database_OBJECTS = \
+"CMakeFiles/handy_database.dir/src/Btree.o" \
 "CMakeFiles/handy_database.dir/src/Pager.o" \
+"CMakeFiles/handy_database.dir/src/Row.o" \
 "CMakeFiles/handy_database.dir/src/Table.o" \
 "CMakeFiles/handy_database.dir/src/main.o"
 
 # External object files for target handy_database
 handy_database_EXTERNAL_OBJECTS =
 
+handy_database: CMakeFiles/handy_database.dir/src/Btree.o
 handy_database: CMakeFiles/handy_database.dir/src/Pager.o
+handy_database: CMakeFiles/handy_database.dir/src/Row.o
 handy_database: CMakeFiles/handy_database.dir/src/Table.o
 handy_database: CMakeFiles/handy_database.dir/src/main.o
 handy_database: CMakeFiles/handy_database.dir/build.make
 handy_database: CMakeFiles/handy_database.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/Users/kinsei/Projects/github/HandyDataBase/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking C executable handy_database"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/Users/kinsei/Projects/github/HandyDataBase/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Linking C executable handy_database"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/handy_database.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

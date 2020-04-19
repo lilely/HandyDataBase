@@ -6,15 +6,23 @@
 
 #IncludeRegexTransform: 
 
+../include/Btree.h
+
 ../include/Pager.h
 stdlib.h
 -
 stdio.h
 -
 
+../include/Row.h
+stdlib.h
+-
+
 ../include/Table.h
 Pager.h
 ../include/Pager.h
+Row.h
+../include/Row.h
 
 /Users/kinsei/Projects/github/HandyDataBase/src/main.c
 stdio.h
@@ -25,4 +33,6 @@ string.h
 -
 Table.h
 /Users/kinsei/Projects/github/HandyDataBase/src/Table.h
+Btree.h
+/Users/kinsei/Projects/github/HandyDataBase/src/Btree.h
 

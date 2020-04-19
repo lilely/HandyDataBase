@@ -91,12 +91,12 @@ clean: CMakeFiles/handy_database.dir/clean
 CMakeFiles/handy_database.dir/all:
 	$(MAKE) -f CMakeFiles/handy_database.dir/build.make CMakeFiles/handy_database.dir/depend
 	$(MAKE) -f CMakeFiles/handy_database.dir/build.make CMakeFiles/handy_database.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/kinsei/Projects/github/HandyDataBase/build/CMakeFiles --progress-num=1,2,3,4 "Built target handy_database"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/kinsei/Projects/github/HandyDataBase/build/CMakeFiles --progress-num=1,2,3,4,5,6 "Built target handy_database"
 .PHONY : CMakeFiles/handy_database.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/handy_database.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/kinsei/Projects/github/HandyDataBase/build/CMakeFiles 4
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/kinsei/Projects/github/HandyDataBase/build/CMakeFiles 6
 	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/handy_database.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/kinsei/Projects/github/HandyDataBase/build/CMakeFiles 0
 .PHONY : CMakeFiles/handy_database.dir/rule

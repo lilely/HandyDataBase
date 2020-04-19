@@ -141,6 +141,21 @@ handy_database/fast:
 .PHONY : handy_database/fast
 
 # target to build an object file
+src/Btree.o:
+	$(MAKE) -f CMakeFiles/handy_database.dir/build.make CMakeFiles/handy_database.dir/src/Btree.o
+.PHONY : src/Btree.o
+
+# target to preprocess a source file
+src/Btree.i:
+	$(MAKE) -f CMakeFiles/handy_database.dir/build.make CMakeFiles/handy_database.dir/src/Btree.i
+.PHONY : src/Btree.i
+
+# target to generate assembly for a file
+src/Btree.s:
+	$(MAKE) -f CMakeFiles/handy_database.dir/build.make CMakeFiles/handy_database.dir/src/Btree.s
+.PHONY : src/Btree.s
+
+# target to build an object file
 src/Pager.o:
 	$(MAKE) -f CMakeFiles/handy_database.dir/build.make CMakeFiles/handy_database.dir/src/Pager.o
 .PHONY : src/Pager.o
@@ -154,6 +169,21 @@ src/Pager.i:
 src/Pager.s:
 	$(MAKE) -f CMakeFiles/handy_database.dir/build.make CMakeFiles/handy_database.dir/src/Pager.s
 .PHONY : src/Pager.s
+
+# target to build an object file
+src/Row.o:
+	$(MAKE) -f CMakeFiles/handy_database.dir/build.make CMakeFiles/handy_database.dir/src/Row.o
+.PHONY : src/Row.o
+
+# target to preprocess a source file
+src/Row.i:
+	$(MAKE) -f CMakeFiles/handy_database.dir/build.make CMakeFiles/handy_database.dir/src/Row.i
+.PHONY : src/Row.i
+
+# target to generate assembly for a file
+src/Row.s:
+	$(MAKE) -f CMakeFiles/handy_database.dir/build.make CMakeFiles/handy_database.dir/src/Row.s
+.PHONY : src/Row.s
 
 # target to build an object file
 src/Table.o:
@@ -194,9 +224,15 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... handy_database"
+	@echo "... src/Btree.o"
+	@echo "... src/Btree.i"
+	@echo "... src/Btree.s"
 	@echo "... src/Pager.o"
 	@echo "... src/Pager.i"
 	@echo "... src/Pager.s"
+	@echo "... src/Row.o"
+	@echo "... src/Row.i"
+	@echo "... src/Row.s"
 	@echo "... src/Table.o"
 	@echo "... src/Table.i"
 	@echo "... src/Table.s"

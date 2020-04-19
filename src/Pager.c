@@ -15,13 +15,18 @@ Pager *pager_open(const char * path) {
     Pager *pager = (Pager *)malloc(sizeof(Pager));
     pager->file_descriptor = fd;
     pager->file_length = file_length;
+    pager->num_pages = pager->file_length/PAGE_SIZE;
+    if (file_length % PAGE_SIZE != 0) {
+        printf("Db file is not a whole number of pages. Corrupt file.\n");
+        exit(EXIT_FAILURE);
+    }
     for (uint32_t i = 0; i< TABLE_MAX_PAGES; i++) {
         pager->pages[i] = NULL;
     }
     return pager;
 }
 
-void flush_page(Pager *pager,uint32_t page_num,uint32_t size) {
+void flush_page(Pager *pager,uint32_t page_num) {
     if (pager->pages[page_num] == NULL)
     {
         printf("Tried to flush null page\n");
@@ -33,7 +38,7 @@ void flush_page(Pager *pager,uint32_t page_num,uint32_t size) {
         printf("Error when seeking file!");
         exit(EXIT_FAILURE);
     }
-    ssize_t bytes_written = write(pager->file_descriptor, pager->pages[page_num], size);
+    ssize_t bytes_written = write(pager->file_descriptor, pager->pages[page_num], PAGE_SIZE);
     if (bytes_written == -1)
     {
         printf("Error when writing file!");
@@ -41,20 +46,14 @@ void flush_page(Pager *pager,uint32_t page_num,uint32_t size) {
     }
 }
 
-void free_pager(Pager *pager, uint32_t full_page_num, ssize_t addition_row_size) {
+void free_pager(Pager *pager) {
 
     for (uint32_t i = 0; i< TABLE_MAX_PAGES; i++) {
-        if (i < full_page_num && pager->pages[i] != NULL)
-        {
-            flush_page(pager, i, PAGE_SIZE);
-        } else if (addition_row_size > 0 && i == full_page_num)
-        {
-            flush_page(pager, i, addition_row_size);
+        if(pager->pages[i] == NULL) {
+            continue;
         }
-        
-        if(pager->pages[i] != NULL) {
-            free(pager->pages[i]);
-        }
+        flush_page(pager, i);
+        free(pager->pages[i]);
         pager->pages[i] = NULL;
     }
     int result = close(pager->file_descriptor);

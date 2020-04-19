@@ -1,5 +1,7 @@
 file(REMOVE_RECURSE
+  "CMakeFiles/handy_database.dir/src/Btree.o"
   "CMakeFiles/handy_database.dir/src/Pager.o"
+  "CMakeFiles/handy_database.dir/src/Row.o"
   "CMakeFiles/handy_database.dir/src/Table.o"
   "CMakeFiles/handy_database.dir/src/main.o"
   "handy_database"
