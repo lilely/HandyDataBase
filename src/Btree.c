@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include "Row.h"
 #include "Pager.h"
+#include "Btree.h"
 
 // common node header
 const uint32_t NODE_TYPE_SIZE = sizeof(uint8_t);
@@ -41,4 +42,16 @@ void* leaf_node_value(void *node, uint32_t cell_num) {
     return leaf_node_cell(node,cell_num)+LEAF_NODE_VALUE_OFFSET;
 }
 
-void initialize_leaf_node(void *node){ *leaf_node_num_cells(node) = 0;}
+uint8_t* get_leaf_node_type(void *node) {
+    return (uint8_t *)(node+NODE_TYPE_OFFSET);
+}
+
+void set_leaf_node_type(void *node, NodeType node_type) {
+    *((uint8_t *)(node+NODE_TYPE_OFFSET)) = node_type;
+}
+
+void initialize_leaf_node(void *node){
+    printf("in initialize_leaf_node\n");
+    set_leaf_node_type(node, NODE_LEAF);
+    *leaf_node_num_cells(node) = 0;
+}

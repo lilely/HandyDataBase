@@ -20,6 +20,7 @@ typedef enum {
 typedef enum {
     EXECUTE_SUCCESS,
     EXECUTE_FAIL,
+    EXECUTE_DUPLICATE_KEY,
     EXECUTE_TABLE_FULL,
 } ExecuteResult;
 
@@ -170,6 +171,48 @@ void dump_row(Row *row) {
     printf("(id: %d, username: %s, email: %s)\n",row->id,row->username,row->email);
 }
 
+Cursor *leaf_node_find(Table *table, uint32_t page_num, uint32_t key) {
+    printf("in leaf_node_find 0\n");
+    void *node = get_page(table->pager, page_num);
+    uint32_t cell_nums = *(leaf_node_num_cells(node));
+    printf("in leaf_node_find 1 cell_nums is%d\n",cell_nums);
+    Cursor *cursor = (Cursor *)malloc(sizeof(Cursor));
+    cursor->page_num = page_num;
+    cursor->table = table;
+    uint32_t min_cell = 0;
+    uint32_t max_cell = cell_nums;
+    while(min_cell != max_cell) {
+        uint32_t mid_cell = (min_cell+max_cell)/2;
+        uint32_t searchKey = *(leaf_node_key(node,mid_cell));
+        if (searchKey == key)
+        {
+            cursor->cell_num = mid_cell;
+            return cursor;
+        } else if (searchKey<key) {
+            min_cell = mid_cell+1;
+        } else {
+            max_cell = mid_cell;
+        }
+    }
+    cursor->cell_num = min_cell;
+    printf("out of leaf_node_find cell_num is%d\n",min_cell);
+    return cursor;
+}
+
+Cursor *table_find(Table *table, uint32_t key) {
+    uint32_t root_page_num = table->root_page_num;
+    void* root_node = get_page(table->pager, root_page_num);
+    if (*(get_leaf_node_type(root_node)) == NODE_LEAF)
+    {
+        printf("befor leaf_node_find\n");
+        return leaf_node_find(table,root_page_num,key);
+        printf("after leaf_node_find\n");
+    } else {
+        printf("Need to implement searching an internal node\n");
+        exit(EXIT_FAILURE);
+    }
+}
+
 ExecuteResult leaf_node_insert(Cursor *cursor, uint32_t key, Row *value) {
     void *node = get_page(cursor->table->pager,cursor->page_num);
     uint32_t cell_nums = *(leaf_node_num_cells(node));
@@ -200,12 +243,25 @@ ExecuteResult execute_insert_statment(Statement *statement, Table*table) {
     if (cell_nums >= LEAF_NODE_MAX_CELLS) {
         return EXECUTE_TABLE_FULL;
     }
-    Cursor *cursor = create_cursor_of_end(table);
-    ExecuteResult result = leaf_node_insert(cursor,statement->row.id,&(statement->row));
-
-    free(cursor);
-    // return result;
-    return EXECUTE_SUCCESS;
+    uint32_t key_to_insert = statement->row.id;
+    Cursor *cursor = table_find(table,key_to_insert);
+    // Cursor *cursor = create_cursor_of_end(table);
+    printf("after table_find\n");
+    if (cursor!=NULL && cursor->cell_num < cell_nums)
+    {
+        uint32_t key_at_index = *leaf_node_key(node, cursor->cell_num);
+        if (key_at_index == key_to_insert) {
+          return EXECUTE_DUPLICATE_KEY;
+        }
+    }
+    printf("before leaf_node_insert\n");
+    ExecuteResult result = leaf_node_insert(cursor,key_to_insert,&(statement->row));
+    if (cursor != NULL)
+    {
+        free(cursor);
+    }
+    
+    return result;
 }
 
 ExecuteResult execute_select_statment(Statement *statment, Table*table) {
@@ -286,6 +342,12 @@ int main(int argc, char *argv[])
         
         switch (execute_statement(&statement, table)) {
             case EXECUTE_SUCCESS:
+                continue;
+            case EXECUTE_DUPLICATE_KEY:
+                printf("key duplicated!\n");
+                continue;
+            case EXECUTE_TABLE_FULL:
+                printf("table full!\n");
                 continue;
             case EXECUTE_FAIL:
                 printf("command executed failed!\n");

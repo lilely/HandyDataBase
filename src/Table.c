@@ -18,6 +18,7 @@ void* get_page(Pager *pager,uint32_t page_num) {
         exit(EXIT_FAILURE);
     }
     printf("in get_page, page num is %d\n",page_num);
+    printf("pager address is %ld",pager);
     void *page = pager->pages[page_num];
     if (page == NULL)
     {

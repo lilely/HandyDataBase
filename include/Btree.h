@@ -36,3 +36,7 @@ extern uint32_t* leaf_node_key(void *node, uint32_t cell_num);
 extern void* leaf_node_value(void *node, uint32_t cell_num);
 
 extern void initialize_leaf_node(void *node);
+
+uint8_t* get_leaf_node_type(void *node);
+
+void set_leaf_node_type(void *node, NodeType node_type);

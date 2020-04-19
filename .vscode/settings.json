@@ -13,7 +13,9 @@
         "utility": "c",
         "vector": "c",
         "ratio": "c",
-        "stdio.h": "c"
+        "stdio.h": "c",
+        "__locale": "c",
+        "__node_handle": "c"
     },
     "C_Cpp.errorSquiggles": "Disabled"
 }
