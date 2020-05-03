@@ -18,21 +18,13 @@ stdio.h
 stdlib.h
 -
 
-../include/Table.h
-Pager.h
-../include/Pager.h
+/Users/kinsei/Projects/github/HandyDataBase/src/Btree.c
+stdlib.h
+-
 Row.h
-../include/Row.h
-
-/Users/kinsei/Projects/github/HandyDataBase/src/main.c
-stdio.h
--
-math.h
--
-string.h
--
-Table.h
-/Users/kinsei/Projects/github/HandyDataBase/src/Table.h
+/Users/kinsei/Projects/github/HandyDataBase/src/Row.h
+Pager.h
+/Users/kinsei/Projects/github/HandyDataBase/src/Pager.h
 Btree.h
 /Users/kinsei/Projects/github/HandyDataBase/src/Btree.h
 

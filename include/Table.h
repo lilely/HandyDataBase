@@ -35,4 +35,8 @@ extern void cursor_advanced(Cursor *cursor);
 
 extern void *get_page(Pager *pager,uint32_t page_num);
 
+extern uint32_t get_unused_page_num(Table *table);
+
+extern void create_new_root(Table *table, uint32_t right_child_page_num);
+
 #endif

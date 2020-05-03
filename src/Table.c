@@ -10,6 +10,10 @@ void db_close(Table *table){
     free(table);
 }
 
+uint32_t get_unused_page_num(Table *table){
+    return table->pager->num_pages;
+}
+
 void* get_page(Pager *pager,uint32_t page_num) {
     if (page_num > TABLE_MAX_ROWS)
     {
@@ -67,6 +71,7 @@ Table *db_open(const char *path) {
     {
         void *root_node = get_page(table->pager,0);
         initialize_leaf_node(root_node);
+        set_node_root(root_node,1);
         printf("address of root node is %ld\n",root_node);
         uint32_t num_of_cells = *(leaf_node_num_cells(root_node));
         printf("number of cells is %d",num_of_cells);
@@ -123,4 +128,23 @@ void cursor_advanced(Cursor *cursor) {
         cursor->is_end = 1;
     }
     
+}
+
+void create_new_root(Table *table, uint32_t right_child_page_num) {
+    void *root = get_page(table->pager, table->root_page_num);
+    void *right_node = get_page(table->pager, right_child_page_num);
+    uint32_t left_page_num = get_unused_page_num(table);
+    void *left_node = get_page(table->pager, left_page_num);
+
+    memcpy(left_node,root, PAGE_SIZE);
+    set_node_root(left_node,0);
+
+    initialize_internal_node(root);
+    set_node_root(left_node,1);
+
+    *internal_node_num_keys(root) = 1;
+    *internal_node_right_child(root) = right_child_page_num;
+    uint32_t max_key = get_node_max_key(left_node);
+    *internal_node_key(root,0) = max_key;
+    *internal_node_child(root,0) = left_page_num;
 }
