@@ -152,4 +152,7 @@ void create_new_root(Table *table, uint32_t right_child_page_num) {
     uint32_t max_key = get_node_max_key(left_node);
     *internal_node_key(root,0) = max_key;
     *internal_node_child(root,0) = left_page_num;
+
+    *node_parent(left_node) = table->root_page_num;
+    *node_parent(right_node) = table->root_page_num;
 }

@@ -43,9 +43,13 @@ extern const uint32_t INTERNAL_NODE_KEY_SIZE;
 extern const uint32_t INTERNAL_NODE_CHILD_SIZE;
 extern const uint32_t INTERNAL_NODE_CELL_SIZE;
 
+extern const uint32_t INTERNAL_NODE_MAX_CELLS;
+
 extern uint8_t is_node_root(void *node);
 
 extern void set_node_root(void *node, uint8_t is_root);
+
+extern uint32_t* node_parent(void *node);
 
 extern uint32_t* leaf_node_num_cells(void *node);
 

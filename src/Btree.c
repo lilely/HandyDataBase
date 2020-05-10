@@ -42,6 +42,9 @@ const uint32_t INTERNAL_NODE_KEY_SIZE = sizeof(uint32_t);
 const uint32_t INTERNAL_NODE_CHILD_SIZE = sizeof(uint32_t);
 const uint32_t INTERNAL_NODE_CELL_SIZE = INTERNAL_NODE_KEY_SIZE+INTERNAL_NODE_CHILD_SIZE;
 
+//const uint32_t INTERNAL_NODE_MAX_CELLS = (PAGE_SIZE - INTERNAL_NODE_HEADER_SIZE)/INTERNAL_NODE_CELL_SIZE;
+const uint32_t INTERNAL_NODE_MAX_CELLS = 3;
+
 uint8_t is_node_root(void *node) {
     uint8_t value = (uint8_t *)(node + IS_ROOT_OFFSET);
     return (uint8_t)value;
@@ -50,6 +53,10 @@ uint8_t is_node_root(void *node) {
 void set_node_root(void *node, uint8_t is_root) {
     uint8_t value = (uint8_t)is_root;
     *(uint8_t *)(node + IS_ROOT_OFFSET) = value;
+}
+
+uint32_t* node_parent(void *node) {
+    return node + PARENT_POINTER_OFFSET;
 }
 
 uint32_t* leaf_node_num_cells(void *node) {
