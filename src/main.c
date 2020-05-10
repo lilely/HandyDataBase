@@ -171,6 +171,36 @@ void dump_row(Row *row) {
     printf("(id: %d, username: %s, email: %s)\n",row->id,row->username,row->email);
 }
 
+Cursor *internal_node_find(Table *table, uint32_t page_num, uint32_t key) {
+    void *node = get_page(table->pager, page_num);
+    uint32_t num_keys = internal_node_num_keys(node);
+    uint32_t left_index = 0;
+    uint32_t right_index = num_keys;
+    while (left_index != right_index)
+    {
+        uint32_t mid_index = (left_index+right_index)/2;
+        uint32_t key_to_right = internal_node_key(node,mid_index);
+        if (key_to_right >= key)
+        {
+            right_index = mid_index;
+        } else {
+            left_index = mid_index+1;
+        }
+    }
+    uint32_t next_node_num = *internal_node_child(node,left_index);
+    void *next_node = get_page(table->pager, next_node_num);
+    if (get_leaf_node_type(next_node) == NODE_LEAF)
+    {
+        Cursor *cursor = (Cursor *)malloc(sizeof(Cursor));
+        cursor->table = table;
+        cursor->page_num = next_node_num;
+        cursor->cell_num = leaf_node_num_cells(next_node);
+        return cursor;
+    } else {
+        return internal_node_find(table,next_node_num,key);
+    }
+}
+
 Cursor *leaf_node_find(Table *table, uint32_t page_num, uint32_t key) {
     printf("in leaf_node_find 0\n");
     void *node = get_page(table->pager, page_num);
@@ -208,9 +238,17 @@ Cursor *table_find(Table *table, uint32_t key) {
         return leaf_node_find(table,root_page_num,key);
         printf("after leaf_node_find\n");
     } else {
-        printf("Need to implement searching an internal node\n");
-        exit(EXIT_FAILURE);
+        return internal_node_find(table,root_page_num,key);
     }
+}
+
+Cursor *table_start(Table *table) {
+    Cursor *cursor = table_find(table,0);
+    void *node = get_page(table->pager,cursor->page_num);
+    uint32_t num_cells = *leaf_node_num_cells(node);
+    cursor->is_end = (num_cells == 0);
+
+    return cursor;
 }
 
 ExecuteResult leaf_node_split_and_insert(Cursor *cursor, uint32_t key, Row *value) {
@@ -229,7 +267,8 @@ ExecuteResult leaf_node_split_and_insert(Cursor *cursor, uint32_t key, Row *valu
         void *destination = leaf_node_cell(destination_node,cell_num);
         if (i == cursor->cell_num)
         {
-            seralize_row(value,leaf_node_value(destination,cursor->cell_num));
+            seralize_row(value,leaf_node_value(destination_node,cursor->cell_num));
+            *leaf_node_key(destination_node,cell_num) = key;
         } else if (i < cursor->cell_num)
         {
             memcpy(destination,leaf_node_cell(old_node,i),LEAF_NODE_CELL_SIZE);
@@ -239,7 +278,10 @@ ExecuteResult leaf_node_split_and_insert(Cursor *cursor, uint32_t key, Row *valu
         }
     }
     *(leaf_node_num_cells(old_node)) = LEAF_NODE_LEFT_SPLIT_COUNT;
+    *(leaf_node_next_leaf(new_node)) = *(leaf_node_next_leaf(old_node));
+    *(leaf_node_next_leaf(old_node)) = new_page_num;
     *(leaf_node_num_cells(new_node)) = LEAF_NODE_RIGHT_SPLIT_COUNT;
+    
 
     if (is_node_root(old_node))
     {
@@ -279,9 +321,6 @@ ExecuteResult execute_insert_statment(Statement *statement, Table*table) {
     printf("address of pages is %ld\n",table->pager->pages[0]);
     uint32_t cell_nums = *(leaf_node_num_cells(node));
     printf("cell_nums is %d\n",cell_nums);
-    if (cell_nums >= LEAF_NODE_MAX_CELLS) {
-        return EXECUTE_TABLE_FULL;
-    }
     uint32_t key_to_insert = statement->row.id;
     Cursor *cursor = table_find(table,key_to_insert);
     // Cursor *cursor = create_cursor_of_end(table);

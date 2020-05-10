@@ -123,9 +123,14 @@ void cursor_advanced(Cursor *cursor) {
     uint32_t page_num = cursor->page_num;
     void* node = get_page(cursor->table->pager,page_num);
     cursor->cell_num +=1;
-    if (cursor->cell_num >= (* leaf_node_num_cells(node)))
+    uint32_t next_page_num = *leaf_node_next_leaf(node);
+    if (next_page_num == 0)
     {
         cursor->is_end = 1;
+    } else {
+        cursor->page_num = next_page_num;
+        cursor->is_end = 0;
+        cursor->cell_num = 0;
     }
     
 }
